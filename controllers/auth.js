@@ -27,7 +27,7 @@ exports.register = async (req, res, next)=>{
         if(req.body.password !== req.body.confirmPassword){
             return next(createError(404, "Password does not match"))
         }
-        if(req.body.email !== req.body.RetypeEmail){
+        if(req.body.email !== req.body.retypeEmail){
             return next(createError(404, "Email does not match"))
         }
         const salt = bcrypt.genSaltSync(10);
@@ -40,7 +40,7 @@ exports.register = async (req, res, next)=>{
             password:hash,
             confirmPassword: hash2,
             email: req.body.email,
-            RetypeEmail: req.body.RetypeEmail,
+            retypeEmail: req.body.retypeEmail,
          })
          const token = jwt.sign({id:newUser._id, isAdmin:newUser.isAdmin}, process.env.JWT, {expiresIn: "1d"})
          newUser.token = token

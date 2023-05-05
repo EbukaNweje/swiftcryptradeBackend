@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
     unique: true, // Unique email for each user
   },
 
-  RetypeEmail: {
+  retypeEmail: {
     type: String,
     required: true,
     unique: true, // Unique email for each user
