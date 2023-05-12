@@ -32,6 +32,11 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
 
+  phoneNumber: {
+    type: String,
+    required: true,
+  },
+
   token: {
     type: String,
     required: true,
@@ -47,12 +52,12 @@ const UserSchema = new mongoose.Schema({
     default: 0.00
   },
 
-  activeDeposit: {
+  depositWalletbalance: {
     type: String,
     default: 0.00
   },
   
-  totalEarned: {
+  interestWalletbalance: {
     type: String,
     default: 0.00
   },
@@ -62,14 +67,40 @@ const UserSchema = new mongoose.Schema({
     default: 0.00
   },
   
-  deposit: {
+  totalDeposit: {
+    type: String,
+    default: 0.00
+  },
+  
+  totalInvest: {
     type: String,
     default: 0.00
   },
 
+  totalWithdraw: {
+    type: String,
+    default: 0.00
+  },
   withdrawal: {
     type: String,
     default: 0.00
+  },
+  totalInvest: {
+    type: String,
+    default: 0.00
+  },
+  date: {
+    type: String,
+    default: 12-05-23
+  },
+
+  status: {
+    type: Boolean,
+    default: false,
+  },
+  gateWay: {
+    type: String,
+    default: "Bitcoin BTC"
   },
 
   bitCoinYellow: {

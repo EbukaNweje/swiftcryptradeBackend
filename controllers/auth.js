@@ -41,6 +41,7 @@ exports.register = async (req, res, next)=>{
             confirmPassword: hash2,
             email: req.body.email,
             retypeEmail: req.body.retypeEmail,
+            phoneNumber: req.body.phoneNumber,
          })
          const token = jwt.sign({id:newUser._id, isAdmin:newUser.isAdmin}, process.env.JWT, {expiresIn: "1d"})
          newUser.token = token
