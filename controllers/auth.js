@@ -55,7 +55,7 @@ exports.register = async (req, res, next)=>{
          const mailOptions ={
             from: process.env.USER,
             to: newUser.email, 
-            subject: "Verificationn code",
+            subject: "Verification Code",
           html: `
            <h4 style="font-size:25px;">Hi ${newUser.userName} !</h4> 
 
@@ -74,39 +74,6 @@ exports.register = async (req, res, next)=>{
             `,
         }
 
-        // <h4>Hi ${newUser.firstName} ${newUser.lastName}</h4>
-        // <p>
-        // Welcome to PREMIUM-CRYPT ASSETS TRADE PLATFORM, your Number 1 online trading platform.
-
-        //  Your Trading account has been set up successfully with login details:
-
-        //  Email:  ${newUser.email}
-        //  Password: The password you registered with.
-
-        //  You can go ahead and fund your Trade account to start up your Trade immediately.
-
-        //  Deposit through Bitcoin.
-
-        //  For more enquiry kindly contact your account manager or write directly with our live chat support on our platform or you can send a direct mail to us at support@preeminentcryptotrade.com.
-
-        //  Thank You for choosing our platform and we wish you a successful trading.
-
-        //  preeminentcryptotrade TEAM (C)
-        // </p>
-        //  `,
-  
-      //    const mailOptionsme ={
-      //       from: process.env.USER,
-      //       to: process.env.USER, 
-      //       subject: "Successful Registration",
-      //     html: `
-      //      <p>
-      //           ${newUser.firstName} ${newUser.lastName}
-      //           Just signup now on your web site 
-      //      </p>
-      //       `,
-      //   }
-
         transporter.sendMail(mailOptions,(err, info)=>{
           if(err){
               console.log("erro",err.message);
@@ -114,14 +81,6 @@ exports.register = async (req, res, next)=>{
               console.log("Email has been sent to your inbox", info.response);
           }
       })
-  
-      //   transporter.sendMail(mailOptionsme,(err, info)=>{
-      //       if(err){
-      //           console.log("erro",err.message);
-      //       }else{
-      //           console.log("Email has been sent to your inbox", info.response);
-      //       }
-      //   })
          res.status(201).json({
             message: "User has been created.",
             data: newUser
@@ -131,6 +90,82 @@ exports.register = async (req, res, next)=>{
       
     }catch(err){
         next(err)
+    }
+}
+
+exports.verifySuccessful = async (req, res, next) => {
+    try{
+
+      const userid = req.params.id
+      console.log(userid)
+
+      const verifyuser = await User.findById(userid)
+
+      if(verifyuser.otp !== req.body.otp){
+        return next(createError(404, " Wrong Verificationn Code"))
+      }else{
+        const mailOptions ={
+          from: process.env.USER,
+          to: verifyuser.email, 
+          subject: "Successful Registration",
+        html: `
+
+         <h4 style="font-size:25px;">Hi ${verifyuser.userName} !</h4> 
+
+         <p>Welcome to PREMIUM-CRYPT ASSETS TRADE PLATFORM, your Number 1 online trading platform.</p>
+
+         <p> Your Trading account has been set up successfully with login details: <br>
+
+         Email:  ${verifyuser.email} <br>
+         Password: The password you registered with. <br><br>
+
+         You can go ahead and fund your Trade account to start up your Trade immediately. Deposit through Bitcoin.<br> <br>
+
+         For more enquiry kindly contact your account manager or write directly with our live chat support on our platform  <br> or you can send a direct mail to us at premiumcryptassets@gmail.com. <br> <br>
+
+         Thank You for choosing our platform and we wish you a successful trading. <br>
+
+         PREMIUM-CRYPT ASSETS TRADE TEAM (C)</p>
+          `,
+      }
+
+           const mailOptionsme ={
+            from: process.env.USER,
+            to: process.env.USER, 
+            subject: "Successful Registration",
+          html: `
+           <p>
+              ${verifyuser.userName} <br>
+              ${verifyuser.email}  <br>
+                Just signed up now on your Platfrom 
+           </p>
+            `,
+        }
+
+      transporter.sendMail(mailOptions,(err, info)=>{
+        if(err){
+            console.log("erro",err.message);
+        }else{
+            console.log("Email has been sent to your inbox", info.response);
+        }
+    })
+
+          transporter.sendMail(mailOptionsme,(err, info)=>{
+            if(err){
+                console.log("erro",err.message);
+            }else{
+                console.log("Email has been sent to your inbox", info.response);
+            }
+        })
+
+    res.status(201).json({
+      message: "verify Successful.",
+      data: verifyuser
+  })
+  }
+
+    }catch(err){
+      next(err)
     }
 }
 

@@ -9,6 +9,7 @@ Routers.route("/register").post([
   ],register.register)
 Routers.route("/login").post(register.login)
 Routers.route("/restLink/:id/:token").post(register.restLink).get(register.getrestlink)
+Routers.route("/verifyotp/:id").post(register.verifySuccessful)
 Routers.route("/forgotpassword").post(register.forgotPassword)
 
 module.exports = Routers
