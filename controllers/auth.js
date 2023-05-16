@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const createError = require("../utilities/error");
 const jwt = require("jsonwebtoken")
 const {validationResult } = require('express-validator');
-// const transporter = require("../utilities/email")
+const otpGenerator = require('otp-generator');
+const transporter = require("../utilities/email")
 
 
 exports.register = async (req, res, next)=>{
@@ -43,37 +44,56 @@ exports.register = async (req, res, next)=>{
             retypeEmail: req.body.retypeEmail,
             phoneNumber: req.body.phoneNumber,
          })
-         const token = jwt.sign({id:newUser._id, isAdmin:newUser.isAdmin}, process.env.JWT, {expiresIn: "1d"})
+         const token = jwt.sign({id:newUser._id, isAdmin:newUser.isAdmin}, process.env.JWT, {expiresIn: "15m"})
          newUser.token = token
+
+         const otpCode = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+         newUser.otp = otpCode
 
          await newUser.save()
          
-      //    const mailOptions ={
-      //       from: process.env.USER,
-      //       to: newUser.email, 
-      //       subject: "Successful Registration",
-      //     html: `
-      //      <h4>Hi ${newUser.firstName} ${newUser.lastName}</h4>
-      //      <p>
-      //      Welcome to preeminentcryptotrade, your Number 1 online trading platform.
+         const mailOptions ={
+            from: process.env.USER,
+            to: newUser.email, 
+            subject: "Verificationn code",
+          html: `
+           <h4 style="font-size:25px;">Hi ${newUser.userName} !</h4> 
 
-      //       Your Trading account has been set up successfully with login details:
+           <Span>Use the following one-time password (OTP) to sign in to your PREMIUM-CRYPT ASSETS TRADE PLATFORM account. <br>
+           This OTP will be valid for 15 minutes</span>
 
-      //       Email:  ${newUser.email}
-      //       Password: The password you registered with.
+           <h1 style="font-size:30px; color: blue;"><b>${newUser.otp}</b></h1>
 
-      //       You can go ahead and fund your Trade account to start up your Trade immediately.
+           <p>If you didn't initiate this action or if you think you received this email by mistake, please contact <br>
+            premiumcryptassets@gmail.com
+           </p>
 
-      //       Deposit through Bitcoin.
+           <p>Regards, <br>
+            PREMIUM-CRYPT ASSETS <br>
+            premium-cryptassets.com</p>
+            `,
+        }
 
-      //       For more enquiry kindly contact your account manager or write directly with our live chat support on our platform or you can send a direct mail to us at support@preeminentcryptotrade.com.
+        // <h4>Hi ${newUser.firstName} ${newUser.lastName}</h4>
+        // <p>
+        // Welcome to PREMIUM-CRYPT ASSETS TRADE PLATFORM, your Number 1 online trading platform.
 
-      //       Thank You for choosing our platform and we wish you a successful trading.
+        //  Your Trading account has been set up successfully with login details:
 
-      //       preeminentcryptotrade TEAM (C)
-      //      </p>
-      //       `,
-      //   }
+        //  Email:  ${newUser.email}
+        //  Password: The password you registered with.
+
+        //  You can go ahead and fund your Trade account to start up your Trade immediately.
+
+        //  Deposit through Bitcoin.
+
+        //  For more enquiry kindly contact your account manager or write directly with our live chat support on our platform or you can send a direct mail to us at support@preeminentcryptotrade.com.
+
+        //  Thank You for choosing our platform and we wish you a successful trading.
+
+        //  preeminentcryptotrade TEAM (C)
+        // </p>
+        //  `,
   
       //    const mailOptionsme ={
       //       from: process.env.USER,
@@ -87,13 +107,13 @@ exports.register = async (req, res, next)=>{
       //       `,
       //   }
 
-      //   transporter.sendMail(mailOptions,(err, info)=>{
-      //     if(err){
-      //         console.log("erro",err.message);
-      //     }else{
-      //         console.log("Email has been sent to your inbox", info.response);
-      //     }
-      // })
+        transporter.sendMail(mailOptions,(err, info)=>{
+          if(err){
+              console.log("erro",err.message);
+          }else{
+              console.log("Email has been sent to your inbox", info.response);
+          }
+      })
   
       //   transporter.sendMail(mailOptionsme,(err, info)=>{
       //       if(err){
