@@ -93,6 +93,54 @@ exports.register = async (req, res, next)=>{
     }
 }
 
+exports.resendotp = async (req,res,next) => {
+  try{
+    const otpCode = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+    const userId = req.params.id
+
+    const NewOtp = await User.findById(userId)
+    NewOtp.otp = otpCode
+    NewOtp.save()
+
+    const mailOptions ={
+      from: process.env.USER,
+      to: NewOtp.email, 
+      subject: "Verification Code",
+    html: `
+     <h4 style="font-size:25px;">Hi ${NewOtp.userName} !</h4> 
+
+     <Span>Use the following one-time password (OTP) to sign in to your PREMIUM-CRYPT ASSETS TRADE PLATFORM account. <br>
+     This OTP will be valid for 15 minutes</span>
+
+     <h1 style="font-size:30px; color: blue;"><b>${NewOtp.otp}</b></h1>
+
+     <p>If you didn't initiate this action or if you think you received this email by mistake, please contact <br>
+      premiumcryptassets@gmail.com
+     </p>
+
+     <p>Regards, <br>
+      PREMIUM-CRYPT ASSETS <br>
+      premium-cryptassets.com</p>
+      `,
+  }
+
+  transporter.sendMail(mailOptions,(err, info)=>{
+    if(err){
+        console.log("erro",err.message);
+    }else{
+        console.log("Email has been sent to your inbox", info.response);
+    }
+})
+    res.status(200).json({
+        status: 'success',
+        message: 'Your Verification Code has been sent to your email',
+      })
+
+  }catch(err){
+    next(err)
+  }
+}
+
 exports.verifySuccessful = async (req, res, next) => {
     try{
 
