@@ -235,29 +235,30 @@ exports.login = async (req, res, next)=>{
 
         //  res.cookie("access_token", token, {
         //     httpOnly: true, 
-        //  }).
+        //  })
 
-        // const mailOptions ={
-        //     from: process.env.USER,
-        //     to: Users.email,
-        //     subject: "Successful Login!",
-        //   html: `
-        //    <h4>Dear ${Users.firstName} ${Users.lastName}</h4>
-        //    <p>Welcome back!</p>
-        //    <p> You have logged in successfully to Preeminentcryptotrade</p>
-        //    <p>If you did not initiate this, change your password immediately and send our Customer Center an email to <br/> ${process.env.USER}
-        //    </p>
-        //    <p>Why send this email? We take security very seriously and we want to keep you in the loop of activities on your account.</p>
-        //     `,
-        // }
+        const mailOptions ={
+            from: process.env.USER,
+            to: Users.email,
+            subject: "Successful Login!",
+          html: `
+           <h4>Dear ${Users.userName}</h4>
+           <p>Welcome back!</p>
+           <p> You have logged in successfully to PREMIUM-CRYPT ASSETS TRADE PLATFORM
+           '</p>
+           <p>If you did not initiate this, change your password immediately and send our Customer Center an email to <br/> ${process.env.USER}
+           </p>
+           <p>Why send this email? We take security very seriously and we want to keep you in the loop of activities on your account.</p>
+            `,
+        }
   
-        // transporter.sendMail(mailOptions,(err, info)=>{
-        //     if(err){
-        //         console.log("erro",err.message);
-        //     }else{
-        //         console.log("Email has been sent to your inbox", info.response);
-        //     }
-        // })
+        transporter.sendMail(mailOptions,(err, info)=>{
+            if(err){
+                console.log("erro",err.message);
+            }else{
+                console.log("Email has been sent to your inbox", info.response);
+            }
+        })
 
          res.status(200).json({...otherDetails})
     }catch(err){
